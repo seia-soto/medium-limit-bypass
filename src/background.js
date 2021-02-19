@@ -86,7 +86,7 @@ browser.webRequest.onCompleted.addListener(
 
     const [, domain] = result
 
-    if (domain && mediumLike.indexOf(domain) < -1) {
+    if (domain && mediumLike.indexOf(domain) === -1) {
       mediumLike.push(domain)
       mediumLike.push('.' + domain)
 
