@@ -38,7 +38,26 @@ const removeCookie = cookie => {
     })
   })
 }
-const removeAllCookies = domain => {
+/*
+const obfuscateCookie = cookie => {
+  return new Promise((resolve, reject) => {
+    browser.cookies.set({
+      ...buildCookieDetails(cookie),
+      value: `${Math.random() * Date.now()}`,
+      expirationDate: (Date.now() / 1000) + 30
+    }, result => {
+      if (!result) {
+        console.error('Failed to obfuscate cookie:', cookie.domain, cookie.path, cookie.name)
+      } else {
+        console.log('Successfully obfuscated cookie:', result)
+      }
+
+      resolve()
+    })
+  })
+}
+*/
+const iterateAllCookies = (domain, processor) => {
   Promise.all([
     getAllCookies(domain),
     getAllCookies('.' + domain)
@@ -54,45 +73,68 @@ const removeAllCookies = domain => {
         let cookiesLn = cookies.length
 
         while (--cookiesLn) {
-          removeCookie(cookies[cookiesLn])
+          processor(cookies[cookiesLn])
         }
       }
     })
 }
 
 // NOTE: Remove cookies on medium-related cookies added;
+/*
 browser.cookies.onChanged.addListener(changedInfo => {
+  return
+
   const { cookie, removed } = changedInfo
 
-  if (!removed) return
+  if (removed) return
 
   const isMediumCookie =
     (cookie.domain.endsWith(medium))
   const isMediumBasedCookie =
     (mediumLike.indexOf(cookie.domain) > -1)
-  if (!isMediumCookie || !isMediumBasedCookie) return
 
-  removeCookie(cookie)
+  if (isMediumCookie || isMediumBasedCookie) {
+    removeCookie(cookie)
+  }
+})
+*/
+
+// NOTE: Remove cookies on medium-related site start loading;
+browser.tabs.onUpdated.addListener((tabId, changedInfo, tab) => {
+  if (changedInfo.status !== 'loading') return
+
+  const result = domainPattern.exec(tab.url) || []
+  const [, domain] = result
+
+  if (!domain || !mediumLike.indexOf(domain) === -1) return
+
+  iterateAllCookies(domain, removeCookie)
+  iterateAllCookies(medium, removeCookie)
 })
 
 // NOTE: Detect cookies on medium-based sites;
 browser.webRequest.onCompleted.addListener(
   details => {
-    if (!details.url.includes('cdn-client.medium.com') || !details.initiator) return
+    const isMedium =
+      details.url.includes('cdn-client.medium.com')
 
-    const result = domainPattern.exec(details.initiator)
+    if (!isMedium || !details.initiator) return
 
-    if (!result) return
-
+    const result = domainPattern.exec(details.initiator) || []
     const [, domain] = result
 
     if (domain && mediumLike.indexOf(domain) === -1) {
       mediumLike.push(domain)
       mediumLike.push('.' + domain)
 
-      removeAllCookies(domain)
+      iterateAllCookies(domain, removeCookie)
+      iterateAllCookies(medium, removeCookie)
 
       console.log('Detected new Medium based website:', domain)
+
+      if (mediumLike.length > 256) {
+        mediumLike.slice(2)
+      }
     }
   },
   {
@@ -103,4 +145,4 @@ browser.webRequest.onCompleted.addListener(
 )
 
 // NOTE: Remove all cookies on initial installation;
-removeAllCookies(medium)
+iterateAllCookies(medium, removeCookie)
