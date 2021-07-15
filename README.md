@@ -4,7 +4,6 @@ A simple chrome extension to bypass medium free reading limit.
 Also, you can get how to bypass permanently without using extension.
 
 > The concept of this extension is proof, not working one.
-> If you use extension, it will detect and block medium-related websites automatically for you.
 
 ## Table of Contents
 
