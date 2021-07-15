@@ -106,7 +106,7 @@ browser.tabs.onUpdated.addListener((tabId, changedInfo, tab) => {
   const result = domainPattern.exec(tab.url) || []
   const [, domain] = result
 
-  if (!domain || !mediumLike.indexOf(domain) === -1) return
+  if (!domain || mediumLike.indexOf(domain) === -1) return
 
   iterateAllCookies(domain, removeCookie)
   iterateAllCookies(medium, removeCookie)
