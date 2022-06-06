@@ -1,19 +1,17 @@
 {
-  "name": "Medium limit bypass",
+  "name": "Medium limit bypass (mv2)",
   "version": "1.1.1",
   "description": "A simple chrome extension to bypass medium free reading limit.",
   "homepage_url": "https://github.com/Seia-Soto/medium-limit-bypass",
   "permissions": [
-    "tabs",
-    "webNavigation",
-    "scripting",
-    "cookies"
-  ],
-  "host_permissions": [
+    "cookies",
     "https://*/*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
   },
   "content_scripts": [
     {
@@ -32,5 +30,5 @@
     "48": "icons/medium-icon-white-on-black.48.png",
     "128": "icons/medium-icon-white-on-black.128.png"
   },
-  "manifest_version": 3
+  "manifest_version": 2
 }

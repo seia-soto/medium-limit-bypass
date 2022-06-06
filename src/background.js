@@ -1,31 +1,45 @@
-chrome.runtime.onMessage.addListener(
-  (request, sender, sendResponse) => {
-    if (!request.url) {
+(() => {
+  browser = chrome || browser
+
+  browser.runtime.onMessage.addListener(
+    (request, sender, sendResponse) => {
+      if (
+        !request.url ||
+        !request.url.startsWith('https://')
+      ) {
+        return
+      }
+
+      browser.cookies.remove(
+        {
+          name: 'uid',
+          url: request.url
+        }
+      )
+    }
+  )
+
+  const navigationEventHandler = (details) => {
+    if (
+      !details.url ||
+      !details.url.startsWith('https://')
+    ) {
       return
     }
 
-    chrome.cookies.remove(
+    browser.scripting.executeScript(
       {
-        name: 'uid',
-        url: request.url
+        files: [
+          'hook.js'
+        ],
+        injectImmediately: true,
+        world: 'MAIN',
+        target: {
+          tabId: details.tabId
+        }
       }
     )
   }
-)
 
-const navigationEventHandler = (details) => {
-  chrome.scripting.executeScript(
-    {
-      files: [
-        'hook.js'
-      ],
-      injectImmediately: true,
-      world: 'MAIN',
-      target: {
-        tabId: details.tabId
-      }
-    }
-  )
-}
-
-chrome.webNavigation.onHistoryStateUpdated.addListener(navigationEventHandler)
+  browser.webNavigation.onHistoryStateUpdated.addListener(navigationEventHandler)
+})()

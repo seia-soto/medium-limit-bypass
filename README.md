@@ -24,6 +24,8 @@ To use this extension, you can with few steps.
 5. Select `src` folder in this repository.
 6. Refresh the webpage.
 
+> For Firefox or browsers require manifest v2, please use `srcv2` directory instead.
+
 # Behind the scense
 
 ## v1.1.0
