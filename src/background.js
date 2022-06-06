@@ -18,28 +18,4 @@
       )
     }
   )
-
-  const navigationEventHandler = (details) => {
-    if (
-      !details.url ||
-      !details.url.startsWith('https://')
-    ) {
-      return
-    }
-
-    browser.scripting.executeScript(
-      {
-        files: [
-          'hook.js'
-        ],
-        injectImmediately: true,
-        world: 'MAIN',
-        target: {
-          tabId: details.tabId
-        }
-      }
-    )
-  }
-
-  browser.webNavigation.onHistoryStateUpdated.addListener(navigationEventHandler)
 })()

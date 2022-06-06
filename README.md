@@ -37,7 +37,7 @@ They did move the user detection to server-side to enforce userscripts and simpl
 
 However, I am introducing new extension to support:
 - Manifest v3
-- Automatic refresh before reaching on server-side limit
+- Automatic refresh before reaching on server-side limit **(removed due to bug)**
 - Fake reading limit data generation for client-side
 - Inject again when popstate(browser history) changes
 - Removal of Medium tracking and temporal post view history
