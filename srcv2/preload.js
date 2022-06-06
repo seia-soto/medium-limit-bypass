@@ -21,11 +21,9 @@
       return
     }
 
-    const isMediumSite = () => !!document.querySelector('script[src*="cdn-client.medium.com"]')
+    const isMediumSite = !!document.querySelector('script[src*="cdn-client.medium.com"]')
 
     if (!isMediumSite) {
-      log('not a medium site!')
-
       return
     }
 

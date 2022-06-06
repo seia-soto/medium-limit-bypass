@@ -14,16 +14,12 @@
       typeof window === 'undefined' ||
       !window.localStorage
     ) {
-      log('failed to load window or localStroage object!')
-
       return
     }
 
-    const isMediumSite = () => !!document.querySelector('script[src*="cdn-client.medium.com"]')
+    const isMediumSite = !!document.querySelector('script[src*="cdn-client.medium.com"]')
 
     if (!isMediumSite) {
-      log('not a medium site!')
-
       return
     }
 
